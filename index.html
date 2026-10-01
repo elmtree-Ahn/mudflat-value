@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>갯벌의 가치! | 어게인 실험과학 수학학원</title>
+<meta name="description" content="손으로 만지며 배우는 갯벌의 가치 체험 활동">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mud:#a39382; --mud-top:#8f7f6d; --mud-deep:#7b6c5c; --hole:#4a3f35;
+  --sea:#3aa0e0; --sea-deep:#1f6fb8; --green:#8fcf5a; --orange:#ff8a2a; --orange-soft:#fff1e3;
+  --ink:#3b3a36; --sub:#77736b; --line:#ece7df; --bg:#ffffff; --card:#fffdf9; --ok:#2fb36b; --bad:#ee5a52;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;font-weight:500}
+body{min-height:100vh;display:flex;flex-direction:column;-webkit-user-select:none;user-select:none}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+
+/* 머리글 */
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--orange-soft);padding:10px 16px}
+.head-in{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:14px;background:var(--orange);display:grid;place-items:center;flex:none}
+.titles{flex:1;min-width:0}
+.titles .brand{font-family:"Jua",sans-serif;font-size:15px;color:var(--sub)}
+.titles h1{margin:0;font-family:"Jua",sans-serif;font-weight:400;font-size:clamp(24px,4vw,34px);color:var(--orange);line-height:1.1}
+.share{flex:none;display:flex;align-items:center;gap:6px;background:var(--orange);color:#fff;font-family:"Jua",sans-serif;font-size:18px;padding:12px 18px;border-radius:999px;box-shadow:0 4px 0 #e06d12;min-height:52px}
+.share:active{transform:translateY(3px);box-shadow:0 1px 0 #e06d12}
+
+/* 탭 */
+nav{max-width:1100px;margin:14px auto 0;padding:0 16px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;width:100%}
+.tab{position:relative;min-height:64px;border-radius:18px;background:#f6f3ee;font-family:"Jua",sans-serif;font-size:clamp(14px,1.9vw,19px);line-height:1.2;padding:8px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:3px solid transparent;transition:.15s;word-break:keep-all}
+.tab .num{font-size:12px;color:var(--sub)}
+.tab.on{background:var(--orange-soft);border-color:var(--orange);color:#c75a00}
+.tab .star{position:absolute;top:-8px;right:-4px;font-size:20px;display:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+.tab.done .star{display:block;animation:pop .5s}
+
+main{flex:1;max-width:1100px;margin:0 auto;padding:16px;width:100%}
+.panel{display:none;animation:fadein .3s}
+.panel.on{display:block}
+.guide{font-family:"Jua",sans-serif;font-size:clamp(18px,2.4vw,24px);margin:4px 0 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.guide .q{background:var(--orange);color:#fff;border-radius:12px;padding:2px 10px;font-size:.8em}
+.msg{margin:14px auto 0;max-width:820px;min-height:64px;border-radius:20px;background:var(--orange-soft);border:3px dashed #ffc896;padding:14px 18px;font-family:"Jua",sans-serif;font-size:clamp(18px,2.4vw,23px);text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.4}
+.msg.good{background:#eaf8ef;border-color:#9fdcb7;color:#1f7a49;animation:pop .45s}
+.msg.warn{background:#fff0ef;border-color:#f6b2ad;color:#b8352d;animation:shake .4s}
+.msg b{font-weight:400;color:#c75a00}
+.big-btn{font-family:"Jua",sans-serif;font-size:22px;min-height:60px;padding:10px 26px;border-radius:999px;background:var(--orange);color:#fff;box-shadow:0 5px 0 #e06d12}
+.big-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #e06d12}
+.big-btn:disabled{opacity:.5}
+.soft-btn{font-family:"Jua",sans-serif;font-size:18px;min-height:52px;padding:8px 20px;border-radius:999px;background:#f1ede6;color:var(--sub)}
+.row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:14px}
+
+/* 1. 갯벌에 누가 살까 */
+.scene{position:relative;width:100%;aspect-ratio:2/1;border-radius:24px;overflow:hidden;box-shadow:0 6px 0 #e9e2d7;touch-action:none}
+.scene>svg.bg{position:absolute;inset:0;width:100%;height:100%}
+.placed{position:absolute;transform:translate(-50%,-100%);pointer-events:none;animation:land .45s cubic-bezier(.3,1.6,.5,1)}
+.placed svg{display:block;width:100%;height:auto}
+.placed.buried{transform:translate(-50%,-55%)}
+.placed.buried svg{clip-path:inset(0 0 45% 0)}
+.placed.buried::after{content:"";position:absolute;left:-12%;right:-12%;top:50%;height:14%;background:var(--mud-top);border-radius:50%}
+.p-clam{width:10%}.p-worm{width:9%}.p-crab{width:9%}.p-bird{width:10%}
+.p-bird .head{transform-origin:52px 30px;animation:peck 1.4s infinite}
+.hole{position:absolute;width:4.5%;aspect-ratio:2/1;transform:translate(-50%,-50%);background:var(--hole);border-radius:50%;pointer-events:none}
+.burrow{position:absolute;width:8%;height:42%;transform:translateX(-50%);background:linear-gradient(#5b4d40,#4a3f35);border-radius:40% 40% 50% 50%/10% 10% 30% 30%;pointer-events:none;animation:land .45s}
+.burrow svg{position:absolute;bottom:4%;left:5%;width:90%}
+.burrow svg .arms{animation:wiggle 2s infinite ease-in-out;transform-origin:30px 30px}
+.cards{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:14px}
+.ccard{position:relative;background:var(--card);border:3px solid var(--line);border-radius:20px;padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;touch-action:none;cursor:grab;min-height:120px;transition:transform .15s}
+.ccard svg{width:70%;max-width:84px;height:62px}
+.ccard .nm{font-family:"Jua",sans-serif;font-size:clamp(17px,2.2vw,22px)}
+.ccard.dragging{opacity:.3}
+.ccard.used{opacity:.45;cursor:default;border-style:dashed}
+.ccard.used::after{content:"✔";position:absolute;top:4px;right:8px;color:var(--ok);font-size:22px;font-weight:900}
+.ccard.back{animation:bounceback .6s}
+.ghost{position:fixed;z-index:50;pointer-events:none;width:110px;transform:translate(-50%,-60%) scale(1.15);filter:drop-shadow(0 8px 8px rgba(0,0,0,.25))}
+.ghost svg{width:100%;height:auto}
+.counter{margin-left:auto;font-size:.85em;color:var(--sub)}
+.counter b{color:var(--orange);font-weight:400}
+
+/* 2. 백합 물 청소 */
+.board{background:#fff;border:3px solid #e6e6e6;border-radius:24px;padding:18px 12px 8px;box-shadow:inset 0 0 0 10px #fafafa,0 6px 0 #eee}
+.tanks{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,4vw,48px);max-width:820px;margin:0 auto}
+.tank-wrap{text-align:center}
+.tank-label{font-family:"Jua",sans-serif;font-size:clamp(20px,2.8vw,28px)}
+.tank-label small{display:block;font-size:.7em;color:var(--sub)}
+.tank{position:relative;margin:8px auto 0;width:100%;aspect-ratio:5/4;border:5px solid #cfe3ee;border-top-width:3px;border-radius:6px 6px 22px 22px;background:linear-gradient(90deg,rgba(255,255,255,.6),rgba(255,255,255,0) 30%);overflow:hidden}
+.water{position:absolute;left:0;right:0;bottom:0;height:84%;transition:background-color .8s}
+.water::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:rgba(255,255,255,.55)}
+.sand{position:absolute;left:0;right:0;bottom:0;height:13%;background:#efe1c4}
+.speck{position:absolute;width:6px;height:6px;border-radius:50%;background:#4f9a2a;transition:opacity .8s;animation:drift 4s infinite ease-in-out}
+.mclam{position:absolute;bottom:6%;width:19%}
+.mclam svg{width:100%;height:auto;overflow:visible}
+.mclam .top{transform-origin:3px 22px;transform-box:view-box;transition:transform .6s}
+.mclam .tubes{opacity:0;transition:opacity .6s}
+.tank.working .mclam .top{transform:rotate(-14deg)}
+.tank.working .mclam .tubes{opacity:1}
+.mclam .in-dot{animation:suck 1.2s infinite linear}
+.mclam .out-dot{animation:blow 1.4s infinite linear}
+.slider-box{max-width:720px;margin:18px auto 4px;padding:0 10px}
+.time-now{text-align:center;font-family:"Jua",sans-serif;font-size:26px;color:var(--orange)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:56px;background:transparent;touch-action:none}
+input[type=range]::-webkit-slider-runnable-track{height:16px;border-radius:99px;background:linear-gradient(90deg,var(--orange) var(--p,0%),#eee var(--p,0%))}
+input[type=range]::-moz-range-track{height:16px;border-radius:99px;background:#eee}
+input[type=range]::-moz-range-progress{height:16px;border-radius:99px;background:var(--orange)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:52px;height:52px;margin-top:-18px;border-radius:50%;background:#fff;border:6px solid var(--orange);box-shadow:0 3px 6px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-thumb{width:40px;height:40px;border-radius:50%;background:#fff;border:6px solid var(--orange)}
+.ticks{display:flex;justify-content:space-between;margin:0 -6px}
+.ticks button{font-family:"Jua",sans-serif;font-size:19px;min-width:64px;min-height:44px;border-radius:12px;color:var(--sub)}
+.ticks button.on{color:var(--orange);background:var(--orange-soft)}
+
+/* 3. 마을을 지켜요 */
+.toggle{display:inline-flex;background:#f1ede6;border-radius:999px;padding:5px}
+.toggle button{font-family:"Jua",sans-serif;font-size:20px;min-height:52px;padding:6px 22px;border-radius:999px;color:var(--sub)}
+.toggle button.on{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.village{width:100%;aspect-ratio:5/2;border-radius:24px;overflow:hidden;box-shadow:0 6px 0 #e9e2d7;display:block}
+.house{transform-box:fill-box;transform-origin:center bottom}
+.house.shake{animation:shake .25s 4}
+
+/* 4. 갯벌이 하는 일 */
+.jobs{display:grid;grid-template-columns:1fr 1fr 250px;gap:14px;align-items:stretch}
+.flip{perspective:900px;min-height:170px;padding:0}
+.flip-in{position:relative;width:100%;height:100%;min-height:170px;transition:transform .6s;transform-style:preserve-3d}
+.flip.open .flip-in{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;text-align:center}
+.front{background:var(--card);border:3px solid var(--line);box-shadow:0 5px 0 var(--line)}
+.front .ic{font-size:50px;line-height:1}
+.front .tt{font-family:"Jua",sans-serif;font-size:clamp(20px,2.6vw,26px);margin-top:8px}
+.front .tap{font-size:14px;color:var(--sub);margin-top:4px}
+.back{transform:rotateY(180deg);font-family:"Jua",sans-serif;font-size:clamp(18px,2.3vw,23px);line-height:1.45;color:#fff}
+.jar-box{grid-row:1 / span 2;grid-column:3;background:#fffaf2;border-radius:22px;border:3px solid #ffe2c2;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center}
+.jar-box svg{width:100%;max-width:200px}
+.jar-text{font-family:"Jua",sans-serif;font-size:22px;color:#c75a00;min-height:60px;line-height:1.3}
+.badge{display:none;margin-top:8px;background:linear-gradient(135deg,#2e7dd7,#1aa0a8);color:#fff;font-family:"Jua",sans-serif;font-size:15px;padding:8px 12px;border-radius:999px;white-space:nowrap}
+.badge.on{display:inline-block;animation:pop .6s}
+.coin-drop{animation:coindrop .6s ease-in backwards}
+
+/* 5. OX 퀴즈 */
+.quiz{max-width:820px;margin:0 auto;text-align:center}
+.q-top{display:flex;justify-content:space-between;align-items:center;font-family:"Jua",sans-serif;font-size:20px;color:var(--sub)}
+.dots{display:flex;gap:8px}
+.dots i{width:16px;height:16px;border-radius:50%;background:#eee}
+.dots i.ok{background:var(--ok)}.dots i.no{background:var(--bad)}.dots i.cur{outline:3px solid var(--orange);outline-offset:2px}
+.q-card{margin-top:12px;background:var(--card);border:3px solid var(--line);border-radius:26px;padding:28px 20px;font-family:"Jua",sans-serif;font-size:clamp(24px,3.4vw,34px);line-height:1.4;min-height:150px;display:flex;align-items:center;justify-content:center}
+.ox{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.ox button{font-family:"Jua",sans-serif;font-size:clamp(70px,11vw,110px);line-height:1;min-height:150px;border-radius:28px;color:#fff}
+.ox .o{background:#3a9ee6;box-shadow:0 7px 0 #2479b8}
+.ox .x{background:#ef6a5f;box-shadow:0 7px 0 #c44b41}
+.ox button:active{transform:translateY(5px);box-shadow:none}
+.ox button:disabled{opacity:.35}
+.result{display:none;margin-top:12px}
+.result .score{font-family:"Jua",sans-serif;font-size:clamp(46px,8vw,72px);color:var(--orange)}
+.result p{font-family:"Jua",sans-serif;font-size:24px;margin:6px 0 0}
+
+/* 바닥글 */
+footer{margin-top:28px;background:#3b3a36;color:#fff;text-align:center;padding:20px 16px 26px}
+footer .brand{font-family:"Jua",sans-serif;font-size:22px}
+footer .tel{margin-top:4px;font-size:17px;opacity:.9}
+
+.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,40px);opacity:0;background:#3b3a36;color:#fff;font-family:"Jua",sans-serif;font-size:20px;padding:14px 26px;border-radius:999px;z-index:60;transition:.25s;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:55}
+
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes land{0%{opacity:0;margin-top:-40px}100%{opacity:1;margin-top:0}}
+@keyframes peck{0%,40%,100%{transform:rotate(0)}55%,70%{transform:rotate(38deg)}}
+@keyframes wiggle{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(4deg)}}
+@keyframes bounceback{0%{transform:translateY(-30px) rotate(-8deg)}40%{transform:translateY(0)}60%{transform:translateY(-12px)}100%{transform:translateY(0)}}
+@keyframes drift{50%{transform:translate(4px,-6px)}}
+@keyframes suck{0%{transform:translate(-10px,-26px);opacity:0}20%{opacity:1}100%{transform:translate(0,0);opacity:0}}
+@keyframes blow{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(6px,-30px);opacity:0}}
+@keyframes coindrop{0%{transform:translateY(-120px);opacity:0}70%{opacity:1}100%{transform:translateY(0)}}
+
+@media (max-width:760px){
+  nav{gap:5px}
+  .tab{min-height:58px;font-size:13px;border-radius:14px}
+  .tab .num{display:none}
+  .cards{grid-template-columns:repeat(3,1fr)}
+  .jobs{grid-template-columns:1fr 1fr}
+  .jar-box{grid-column:1/-1;grid-row:auto}
+  .share span{display:none}
+  .titles .brand{font-size:13px}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-in">
+    <div class="logo" aria-hidden="true">
+      <svg width="30" height="30" viewBox="0 0 30 30"><path d="M11 3h8M13 3v8L5 25a2 2 0 0 0 2 3h16a2 2 0 0 0 2-3l-8-14V3" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/><path d="M8 21h14l2 4H6z" fill="#fff"/></svg>
+    </div>
+    <div class="titles">
+      <div class="brand">어게인 실험과학 수학학원</div>
+      <h1>갯벌의 가치!</h1>
+    </div>
+    <button class="share" id="share" aria-label="공유하기">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+      <span>공유하기</span>
+    </button>
+  </div>
+</header>
+
+<nav id="tabs">
+  <button class="tab on" data-t="0"><span class="num">하나</span>갯벌에 누가 살까?<span class="star">⭐</span></button>
+  <button class="tab" data-t="1"><span class="num">둘</span>백합 물 청소 실험<span class="star">⭐</span></button>
+  <button class="tab" data-t="2"><span class="num">셋</span>마을을 지켜요<span class="star">⭐</span></button>
+  <button class="tab" data-t="3"><span class="num">넷</span>갯벌이 하는 일<span class="star">⭐</span></button>
+  <button class="tab" data-t="4"><span class="num">다섯</span>OX 퀴즈<span class="star">⭐</span></button>
+</nav>
+
+<main>
+  <!-- 1 -->
+  <section class="panel on" id="p0">
+    <div class="guide"><span class="q">해 보기</span>생물 카드를 끌어서 갯벌에 놓아 보세요!<span class="counter">갯벌 친구 <b id="cnt">0</b> / 5</span></div>
+    <div class="scene" id="scene">
+      <svg class="bg" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe6ff"/><stop offset="1" stop-color="#eaf7ff"/></linearGradient>
+          <linearGradient id="mudg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a39382"/><stop offset="1" stop-color="#7b6c5c"/></linearGradient>
+          <linearGradient id="seag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5bb7ec"/><stop offset="1" stop-color="#2b86cf"/></linearGradient>
+        </defs>
+        <rect width="1000" height="200" fill="url(#sky)"/>
+        <circle cx="110" cy="70" r="38" fill="#ffd34d"/>
+        <g fill="#fff"><ellipse cx="420" cy="70" rx="60" ry="20"/><ellipse cx="460" cy="58" rx="40" ry="22"/><ellipse cx="700" cy="100" rx="50" ry="16"/></g>
+        <path d="M0 200 Q250 194 500 200 T790 200 L1000 262 V500 H0Z" fill="url(#mudg)"/>
+        <path d="M0 200 Q250 194 500 200 T790 200" fill="none" stroke="#8f7f6d" stroke-width="8"/>
+        <g fill="#8a7a69" opacity=".7">
+          <ellipse cx="80" cy="300" rx="14" ry="5"/><ellipse cx="260" cy="350" rx="10" ry="4"/><ellipse cx="420" cy="290" rx="16" ry="5"/><ellipse cx="560" cy="380" rx="12" ry="4"/><ellipse cx="700" cy="320" rx="14" ry="5"/><ellipse cx="150" cy="440" rx="18" ry="5"/><ellipse cx="360" cy="460" rx="12" ry="4"/><ellipse cx="640" cy="450" rx="16" ry="5"/><ellipse cx="850" cy="420" rx="14" ry="5"/>
+        </g>
+        <path d="M770 196 L1000 182 V262 L790 200Z" fill="url(#seag)" opacity=".92"/>
+        <path d="M820 192 q15 -8 30 0 t30 0 M900 188 q15 -8 30 0 t30 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"/>
+        <text x="895" y="235" text-anchor="middle" font-family="Jua,sans-serif" font-size="26" fill="#fff">바다</text>
+        <text x="40" y="490" font-family="Jua,sans-serif" font-size="24" fill="#f4ede4" opacity=".85">갯벌 (썰물 때)</text>
+      </svg>
+    </div>
+    <div class="cards" id="cards"></div>
+    <div class="msg" id="m0">카드를 손가락으로 꾹 눌러서 갯벌 위로 옮겨 보세요.</div>
+    <div class="row"><button class="soft-btn" id="r0">↺ 다시 하기</button></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="panel" id="p1">
+    <div class="guide"><span class="q">왜 그럴까?</span>시간 막대를 밀어서 두 수조를 비교해 보세요!</div>
+    <div class="board">
+      <div class="tanks">
+        <div class="tank-wrap">
+          <div class="tank-label">A수조<small>(백합 0마리)</small></div>
+          <div class="tank" id="tankA"><div class="water" id="wA"></div><div class="sand"></div></div>
+        </div>
+        <div class="tank-wrap">
+          <div class="tank-label">B수조<small>(백합 10마리)</small></div>
+          <div class="tank" id="tankB"><div class="water" id="wB"></div><div class="sand"></div></div>
+        </div>
+      </div>
+      <div class="slider-box">
+        <div class="time-now"><span id="tnow">0</span>분 지났어요</div>
+        <input type="range" id="timer" min="0" max="60" step="20" value="0" aria-label="시간">
+        <div class="ticks" id="ticks"><button data-v="0" class="on">0분</button><button data-v="20">20분</button><button data-v="40">40분</button><button data-v="60">60분</button></div>
+      </div>
+    </div>
+    <div class="msg" id="m1"></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="panel" id="p2">
+    <div class="guide"><span class="q">해 보기</span>갯벌이 있을 때와 없을 때, 큰 파도를 보내 보세요!</div>
+    <div class="row" style="margin:0 0 12px">
+      <div class="toggle" id="flatToggle"><button class="on" data-f="1">갯벌 있음</button><button data-f="0">갯벌 없음</button></div>
+      <button class="big-btn" id="waveBtn">🌊 큰 파도 보내기</button>
+    </div>
+    <svg class="village" id="village" viewBox="0 0 1000 400" aria-label="바닷가 마을">
+      <defs>
+        <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a9dcff"/><stop offset="1" stop-color="#e6f5ff"/></linearGradient>
+        <linearGradient id="wav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd0ff"/><stop offset="1" stop-color="#2b86cf"/></linearGradient>
+      </defs>
+      <rect width="1000" height="400" fill="url(#sky2)"/>
+      <g fill="#fff" opacity=".9"><ellipse cx="560" cy="60" rx="55" ry="18"/><ellipse cx="600" cy="50" rx="35" ry="20"/></g>
+      <path d="M0 230 H290 V400 H0Z" fill="#a7d47a"/>
+      <path d="M0 230 H290" stroke="#8bc35d" stroke-width="6"/>
+      <g class="house"><rect x="40" y="170" width="70" height="60" fill="#fff4e0" stroke="#d9b98c" stroke-width="3"/><path d="M30 172 L75 130 L120 172Z" fill="#ff8a2a"/><rect x="66" y="198" width="18" height="32" fill="#b98a5a"/></g>
+      <g class="house"><rect x="140" y="180" width="60" height="50" fill="#e9f6ff" stroke="#9cc4df" stroke-width="3"/><path d="M130 182 L170 146 L210 182Z" fill="#e05a4f"/><rect x="152" y="194" width="16" height="14" fill="#8fd0ff"/></g>
+      <circle cx="240" cy="200" r="18" fill="#5fb43c"/><rect x="236" y="210" width="8" height="20" fill="#8a6038"/>
+      <rect id="seaRect" x="298" y="250" width="702" height="150" fill="#3aa0e0" opacity=".55"/>
+      <path id="seabed" d="" fill="#a39382"/>
+      <path d="M298 250 H1000" stroke="#d6f0ff" stroke-width="4"/>
+      <rect x="276" y="195" width="22" height="205" fill="#b9b4ab" stroke="#8f8a82" stroke-width="3"/>
+      <text x="287" y="186" text-anchor="middle" font-family="Jua,sans-serif" font-size="18" fill="#6b665e">방파제</text>
+      <text id="bedLabel" x="650" y="300" text-anchor="middle" font-family="Jua,sans-serif" font-size="24" fill="#fff"></text>
+      <g id="wave" opacity="0">
+        <path d="M150 0 C90 -6 40 -95 -10 -104 C-48 -110 -66 -82 -50 -66 C-38 -56 -22 -72 -28 -50 C-34 -28 -52 -8 -70 0 Z" fill="url(#wav)" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>
+      </g>
+      <g id="splash"></g>
+      <text id="bang" x="200" y="110" text-anchor="middle" font-family="Jua,sans-serif" font-size="52" fill="#1f6fb8" opacity="0">철썩!</text>
+    </svg>
+    <div class="msg" id="m2">갯벌이 있을 때와 없을 때 모두 해 보고 비교해 보세요.</div>
+  </section>
+
+  <!-- 4 -->
+  <section class="panel" id="p3">
+    <div class="guide"><span class="q">눌러 보기</span>카드를 눌러서 갯벌이 하는 일을 찾아보세요!</div>
+    <div class="jobs" id="jobs">
+      <div class="jar-box">
+        <svg viewBox="0 0 200 230" aria-hidden="true">
+          <defs><clipPath id="jarClip"><path d="M40 60 Q30 70 30 95 V200 Q30 220 50 220 H150 Q170 220 170 200 V95 Q170 70 160 60Z"/></clipPath></defs>
+          <g clip-path="url(#jarClip)"><g id="coins"></g></g>
+          <path d="M40 60 Q30 70 30 95 V200 Q30 220 50 220 H150 Q170 220 170 200 V95 Q170 70 160 60Z" fill="rgba(200,235,255,.25)" stroke="#9cc4df" stroke-width="5"/>
+          <rect x="50" y="36" width="100" height="26" rx="8" fill="#ffb066" stroke="#e08a3a" stroke-width="4"/>
+          <path d="M50 110 Q46 150 52 190" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>
+        </svg>
+        <div class="jar-text" id="jarText">카드를 열면<br>동전이 쌓여요!</div>
+        <div class="badge" id="badge">🏅 2021년 유네스코 세계유산</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="panel" id="p4">
+    <div class="quiz">
+      <div class="q-top"><span id="qNum">1번 문제</span><div class="dots" id="dots"></div><span>점수 <b id="qScore" style="color:var(--orange);font-weight:400">0</b>점</span></div>
+      <div id="qBody">
+        <div class="q-card" id="qText"></div>
+        <div class="ox"><button class="o" data-a="O" aria-label="O">O</button><button class="x" data-a="X" aria-label="X">X</button></div>
+        <div class="msg" id="m4"></div>
+        <div class="row"><button class="big-btn" id="qNext" style="display:none">다음 문제 ▶</button></div>
+      </div>
+      <div class="result" id="qResult">
+        <div class="score"><span id="fScore">0</span> / 5</div>
+        <p id="fMsg"></p>
+        <div class="row"><button class="big-btn" id="qRetry">↺ 다시 풀기</button></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="brand">어게인 실험과학 수학학원</div>
+  <div class="tel">교육문의 010.2976.5774</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+<canvas id="fx"></canvas>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+/* ---------- 소리 ---------- */
+let ac;
+function audio() { return ac = ac || new (window.AudioContext || window.webkitAudioContext)(); }
+function tone(f, d = .15, type = 'sine', at = 0, v = .18) {
+  try {
+    const a = audio(), t = a.currentTime + at, o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.value = f;
+    g.gain.setValueAtTime(v, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+    o.connect(g).connect(a.destination); o.start(t); o.stop(t + d);
+  } catch (e) {}
+}
+const sfx = {
+  pop: () => { tone(520, .09, 'triangle'); tone(780, .1, 'triangle', .06); },
+  good: () => [523, 659, 784, 1047].forEach((f, i) => tone(f, .25, 'triangle', i * .09)),
+  win: () => [523, 659, 784, 1047, 784, 1047, 1319].forEach((f, i) => tone(f, .3, 'triangle', i * .1)),
+  bad: () => { tone(260, .18, 'square', 0, .07); tone(190, .3, 'square', .16, .07); },
+  coin: () => { tone(988, .08, 'square', 0, .07); tone(1319, .25, 'square', .08, .07); },
+  boing: () => { tone(300, .1); tone(500, .15, 'sine', .08); tone(250, .2, 'sine', .2); },
+  whoosh(big) {
+    try {
+      const a = audio(), n = a.sampleRate * 1.6, b = a.createBuffer(1, n, a.sampleRate), d = b.getChannelData(0);
+      for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * i / n);
+      const s = a.createBufferSource(), fl = a.createBiquadFilter(), g = a.createGain();
+      fl.type = 'lowpass'; fl.frequency.value = big ? 900 : 500; g.gain.value = big ? .5 : .25;
+      s.buffer = b; s.connect(fl).connect(g).connect(a.destination); s.start();
+    } catch (e) {}
+  }
+};
+
+/* ---------- 색종이 · 반짝이 ---------- */
+const cv = $('#fx'), cx = cv.getContext('2d');
+let parts = [], running = false;
+const COLORS = ['#ff8a2a', '#ffd34d', '#3aa0e0', '#8fcf5a', '#ef6a5f', '#b38cf0'];
+function resize() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
+addEventListener('resize', resize); resize();
+function burst(x, y, n = 80, star = false) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2, sp = (star ? 3 : 5) + Math.random() * (star ? 4 : 9);
+    parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - (star ? 1 : 6), r: Math.random() * 6.28, vr: (Math.random() - .5) * .3,
+      s: 6 + Math.random() * 6, c: COLORS[i % COLORS.length], life: star ? 45 : 140, star });
+  }
+  if (!running) { running = true; requestAnimationFrame(loop); }
+}
+function confetti() {
+  burst(innerWidth * .25, innerHeight * .45, 70); burst(innerWidth * .75, innerHeight * .45, 70);
+  setTimeout(() => burst(innerWidth * .5, innerHeight * .35, 90), 250);
+}
+function sparkleAt(el) { const r = el.getBoundingClientRect(); burst(r.left + r.width / 2, r.top + r.height / 2, 18, true); }
+function drawStar(s) { cx.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? s / 2.4 : s, a = i * Math.PI / 5; cx.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } cx.fill(); }
+function loop() {
+  const k = devicePixelRatio; cx.clearRect(0, 0, cv.width, cv.height);
+  parts = parts.filter(p => p.life-- > 0);
+  for (const p of parts) {
+    p.vy += p.star ? .12 : .25; p.vx *= .985; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    cx.save(); cx.translate(p.x * k, p.y * k); cx.rotate(p.r); cx.globalAlpha = Math.min(1, p.life / 30); cx.fillStyle = p.c;
+    if (p.star) drawStar(p.s * k); else cx.fillRect(-p.s * k / 2, -p.s * k / 4, p.s * k, p.s * k / 2);
+    cx.restore();
+  }
+  if (parts.length) requestAnimationFrame(loop); else { running = false; cx.clearRect(0, 0, cv.width, cv.height); }
+}
+
+/* ---------- 공통 ---------- */
+function say(el, text, kind = '') { el.className = 'msg'; void el.offsetWidth; if (kind) el.classList.add(kind); el.innerHTML = text; }
+function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove('on'), 2000); }
+function done(i) { $$('.tab')[i].classList.add('done'); }
+const isDone = i => $$('.tab')[i].classList.contains('done');
+
+$('#share').onclick = async () => {
+  const url = location.href;
+  if (navigator.share) { try { await navigator.share({ title: '갯벌의 가치!', text: '어게인 실험과학 수학학원 · 갯벌의 가치!', url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(url); }
+  catch (e) { const ta = document.createElement('textarea'); ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }
+  toast('주소가 복사됐어요');
+};
+
+$$('.tab').forEach(t => t.onclick = () => {
+  $$('.tab').forEach(x => x.classList.toggle('on', x === t));
+  $$('.panel').forEach((p, i) => p.classList.toggle('on', i == t.dataset.t));
+  sfx.pop();
+});
+
+/* ---------- 생물 그림 ---------- */
+const ART = {
+  clam: `<svg viewBox="0 0 60 44"><path d="M4 34 Q30 -6 56 34 Q30 42 4 34Z" fill="#efdcb8" stroke="#8a6a44" stroke-width="2.5"/><path d="M30 38 L18 12 M30 38 L30 6 M30 38 L42 12 M30 38 L10 24 M30 38 L50 24" stroke="#b08b5e" stroke-width="2"/><path d="M12 28 l4 -4 4 4 4 -4 4 4 4 -4 4 4 4 -4 4 4" fill="none" stroke="#6e5236" stroke-width="2"/></svg>`,
+  crab: `<svg viewBox="0 0 90 64"><g stroke="#c2412a" stroke-width="4" stroke-linecap="round"><path d="M24 40 L8 50 M26 46 L12 58 M66 40 L82 50 M64 46 L78 58"/><path d="M30 30 L16 18 M60 30 L74 18"/><path d="M38 24 V12 M52 24 V12"/></g><circle cx="13" cy="14" r="9" fill="#ef5a3c"/><circle cx="77" cy="14" r="9" fill="#ef5a3c"/><ellipse cx="45" cy="38" rx="26" ry="16" fill="#ef5a3c"/><circle cx="38" cy="10" r="5" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="52" cy="10" r="5" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="38" cy="10" r="2" fill="#333"/><circle cx="52" cy="10" r="2" fill="#333"/><path d="M38 44 Q45 49 52 44" stroke="#9e2b1c" stroke-width="2.5" fill="none"/></svg>`,
+  octo: `<svg viewBox="0 0 60 70"><g class="arms" stroke="#d07a55" stroke-width="5" fill="none" stroke-linecap="round"><path d="M18 32 Q8 50 14 66"/><path d="M24 34 Q20 52 26 66"/><path d="M30 34 Q30 52 32 68"/><path d="M36 34 Q40 52 36 66"/><path d="M42 32 Q52 50 46 66"/></g><ellipse cx="30" cy="20" rx="17" ry="18" fill="#e08a62"/><circle cx="24" cy="22" r="4" fill="#fff"/><circle cx="36" cy="22" r="4" fill="#fff"/><circle cx="24" cy="23" r="2" fill="#333"/><circle cx="36" cy="23" r="2" fill="#333"/></svg>`,
+  worm: `<svg viewBox="0 0 90 44"><path d="M8 34 Q20 6 32 26 T56 22 T82 12" fill="none" stroke="#e58fa0" stroke-width="9" stroke-linecap="round"/><g fill="#c76b7d"><circle cx="20" cy="18" r="1.8"/><circle cx="32" cy="26" r="1.8"/><circle cx="46" cy="28" r="1.8"/><circle cx="60" cy="18" r="1.8"/><circle cx="72" cy="14" r="1.8"/></g><circle cx="80" cy="11" r="2" fill="#333"/></svg>`,
+  bird: `<svg viewBox="0 0 80 74"><g stroke="#c47a2c" stroke-width="3" stroke-linecap="round"><path d="M34 48 L30 72 M42 48 L44 72"/></g><ellipse cx="34" cy="38" rx="22" ry="13" fill="#9c8a74"/><ellipse cx="36" cy="43" rx="14" ry="7" fill="#f4ede3"/><path d="M12 34 L2 30 L12 40Z" fill="#7d6c58"/><g class="head"><circle cx="52" cy="28" r="9" fill="#9c8a74"/><circle cx="55" cy="26" r="2" fill="#333"/><path d="M60 29 L79 34" stroke="#3b3a36" stroke-width="3" stroke-linecap="round"/></g></svg>`,
+  peng: `<svg viewBox="0 0 54 74"><ellipse cx="27" cy="40" rx="20" ry="28" fill="#2b2f3a"/><ellipse cx="27" cy="46" rx="13" ry="20" fill="#fff"/><circle cx="21" cy="24" r="3" fill="#fff"/><circle cx="33" cy="24" r="3" fill="#fff"/><circle cx="21" cy="24" r="1.5" fill="#222"/><circle cx="33" cy="24" r="1.5" fill="#222"/><path d="M22 30 L27 36 L32 30Z" fill="#ff9b2a"/><ellipse cx="19" cy="69" rx="7" ry="3" fill="#ff9b2a"/><ellipse cx="35" cy="69" rx="7" ry="3" fill="#ff9b2a"/></svg>`
+};
+const CREATURES = [
+  { k: 'clam', nm: '백합', say: '백합이 갯벌 속에 쏙 들어갔어요!' },
+  { k: 'crab', nm: '게', say: '게가 구멍 옆에서 두리번거려요!' },
+  { k: 'octo', nm: '낙지', say: '낙지가 갯벌 굴 속에 숨었어요!' },
+  { k: 'worm', nm: '갯지렁이', say: '갯지렁이가 갯벌을 파고들어요!' },
+  { k: 'bird', nm: '도요새', say: '도요새가 콕콕 먹이를 찾아요!' },
+  { k: 'peng', nm: '펭귄' }
+];
+
+/* ---------- 1. 갯벌에 누가 살까 ---------- */
+const scene = $('#scene'), cards = $('#cards'), m0 = $('#m0');
+const SURF = 40;  // 갯벌 표면 높이(%)
+const SEA_X = 76; // 이보다 오른쪽은 바다(%)
+let placedCount = 0;
+
+function buildCards() {
+  cards.innerHTML = '';
+  CREATURES.forEach(c => {
+    const b = document.createElement('div');
+    b.className = 'ccard';
+    b.innerHTML = ART[c.k] + `<span class="nm">${c.nm}</span>`;
+    b.addEventListener('pointerdown', e => startDrag(e, b, c));
+    cards.appendChild(b);
+  });
+}
+function startDrag(e, card, c) {
+  if (card.classList.contains('used')) return;
+  e.preventDefault(); sfx.pop();
+  const g = document.createElement('div'); g.className = 'ghost'; g.innerHTML = ART[c.k];
+  document.body.appendChild(g); card.classList.add('dragging');
+  const mv = ev => { g.style.left = ev.clientX + 'px'; g.style.top = ev.clientY + 'px'; };
+  mv(e);
+  const up = ev => {
+    removeEventListener('pointermove', mv); removeEventListener('pointerup', up); removeEventListener('pointercancel', up);
+    g.remove(); card.classList.remove('dragging');
+    if (ev.type === 'pointerup') drop(ev, card, c);
+  };
+  addEventListener('pointermove', mv); addEventListener('pointerup', up); addEventListener('pointercancel', up);
+}
+function back(card) { card.classList.remove('back'); void card.offsetWidth; card.classList.add('back'); }
+function drop(ev, card, c) {
+  const r = scene.getBoundingClientRect();
+  const x = (ev.clientX - r.left) / r.width * 100, y = (ev.clientY - r.top) / r.height * 100;
+  if (x < 0 || x > 100 || y < 0 || y > 100) return;
+  if (c.k === 'peng') { sfx.boing(); back(card); say(m0, '펭귄은 우리나라 갯벌이 아니라 남쪽 먼 바다에 살아요.', 'warn'); return; }
+  if (x > SEA_X) { sfx.bad(); back(card); say(m0, '거기는 바다예요. 갯벌 위에 놓아 주세요!', 'warn'); return; }
+  const el = place(c.k, Math.max(6, Math.min(SEA_X - 5, x)));
+  card.classList.add('used'); sfx.pop(); placedCount++;
+  $('#cnt').textContent = placedCount;
+  setTimeout(() => sparkleAt(el), 250);
+  if (placedCount === 5) setTimeout(() => { sfx.win(); confetti(); say(m0, '🎉 갯벌은 많은 생물이 모여 사는 집이에요.', 'good'); done(0); }, 450);
+  else say(m0, `${c.say} (${placedCount}/5)`, 'good');
+}
+function place(k, x) {
+  const add = (cls, html, style) => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; Object.assign(d.style, style); scene.appendChild(d); return d; };
+  const top = SURF + '%', left = x + '%';
+  if (k === 'clam' || k === 'worm') return add(`placed buried p-${k}`, ART[k], { left, top });
+  if (k === 'crab') { add('hole', '', { left: (x + 6) + '%', top }); return add('placed p-crab', ART.crab, { left, top: (SURF + .5) + '%' }); }
+  if (k === 'octo') return add('burrow', ART.octo, { left, top: (SURF - 1) + '%' });
+  return add('placed p-bird', ART.bird, { left, top: (SURF + .5) + '%' });
+}
+$('#r0').onclick = () => {
+  $$('#scene > div').forEach(d => d.remove()); placedCount = 0; $('#cnt').textContent = 0; buildCards();
+  say(m0, '카드를 손가락으로 꾹 눌러서 갯벌 위로 옮겨 보세요.');
+};
+buildCards();
+
+/* ---------- 2. 백합 물 청소 실험 ---------- */
+const A_ALPHA = { 0: .62, 20: .61, 40: .6, 60: .59 }, B_ALPHA = { 0: .62, 20: .42, 40: .22, 60: .07 };
+const green = a => `rgba(143,207,90,${a})`;
+const clamSvg = `<svg viewBox="0 0 40 30"><g class="tubes"><path d="M14 16 Q12 4 9 -2" stroke="#e9c9a3" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M20 16 Q20 4 22 -3" stroke="#e9c9a3" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle class="in-dot" cx="9" cy="-2" r="2" fill="#4f9a2a"/><circle class="in-dot" cx="9" cy="-2" r="1.6" fill="#4f9a2a" style="animation-delay:.6s"/><circle class="out-dot" cx="22" cy="-3" r="2.2" fill="#fff" stroke="#bfe6ff"/><circle class="out-dot" cx="22" cy="-3" r="1.8" fill="#fff" stroke="#bfe6ff" style="animation-delay:.7s"/></g><path d="M3 22 Q20 34 37 22 Z" fill="#e7d1a8" stroke="#8a6a44" stroke-width="1.8"/><path class="top" d="M3 22 Q20 4 37 22 Z" fill="#efdcb8" stroke="#8a6a44" stroke-width="1.8"/></svg>`;
+function fillTank(tank, withClams) {
+  const w = tank.querySelector('.water');
+  for (let i = 0; i < 26; i++) {
+    const s = document.createElement('i'); s.className = 'speck';
+    s.style.left = (4 + Math.random() * 90) + '%'; s.style.top = (6 + Math.random() * 70) + '%';
+    s.style.animationDelay = (-Math.random() * 4) + 's'; w.appendChild(s);
+  }
+  if (withClams) for (let i = 0; i < 10; i++) {
+    const c = document.createElement('div'); c.className = 'mclam'; c.innerHTML = clamSvg;
+    c.style.left = (i > 4 ? 9 + (i % 5) * 17.5 : 0 + i * 20) + '%'; c.style.bottom = (i > 4 ? 2 : 8) + '%'; c.style.zIndex = i > 4 ? 2 : 1;
+    tank.appendChild(c);
+  }
+}
+fillTank($('#tankA'), false); fillTank($('#tankB'), true);
+const timer = $('#timer'), m1 = $('#m1');
+let cleanDone = false, lastT = 0;
+function setTime(v) {
+  v = +v; timer.value = v; timer.style.setProperty('--p', (v / 60 * 100) + '%');
+  $('#tnow').textContent = v;
+  $$('#ticks button').forEach(b => b.classList.toggle('on', +b.dataset.v === v));
+  $('#wA').style.backgroundColor = green(A_ALPHA[v]);
+  $('#wB').style.backgroundColor = green(B_ALPHA[v]);
+  $$('#wB .speck').forEach((s, i) => s.style.opacity = i < 26 * (B_ALPHA[v] / .62) ? 1 : 0);
+  $('#tankB').classList.toggle('working', v > 0);
+  if (v !== lastT) sfx.pop();
+  lastT = v;
+  if (v === 0) say(m1, '두 수조에 똑같은 연두색 물(작은 먹이가 섞인 물)을 넣었어요.<br>시간이 지나면 어떻게 될까요?');
+  else if (v === 20) say(m1, 'B수조의 백합이 껍데기를 살짝 열고 관 두 개를 내밀었어요.<br>물 색을 비교해 보세요!');
+  else if (v === 40) say(m1, 'A수조는 그대로인데… B수조는 점점 맑아지고 있어요!<br>왜 그럴까요?');
+  else {
+    say(m1, '🎉 백합이 관으로 물을 빨아들여 작은 먹이를 걸러 먹어서 B수조가 맑아졌어요.', 'good');
+    if (!cleanDone) { cleanDone = true; sfx.win(); confetti(); done(1); } else sparkleAt($('#tankB'));
+  }
+}
+timer.addEventListener('input', () => setTime(timer.value));
+$$('#ticks button').forEach(b => b.onclick = () => setTime(b.dataset.v));
+setTime(0);
+
+/* ---------- 3. 마을을 지켜요 ---------- */
+let hasFlat = true, waving = false;
+const tried = new Set(), WATER_Y = 250, m2 = $('#m2'), wave = $('#wave');
+function drawShore() {
+  $('#seabed').setAttribute('d', hasFlat ? 'M298 268 Q500 264 700 272 T1000 292 V400 H298Z' : 'M298 396 H1000 V400 H298Z');
+  $('#seaRect').setAttribute('fill', hasFlat ? '#3aa0e0' : '#1f6fb8');
+  $('#seaRect').setAttribute('opacity', hasFlat ? '.45' : '.85');
+  $('#bedLabel').textContent = hasFlat ? '넓고 얕은 갯벌' : '깊은 바다';
+  $('#bedLabel').setAttribute('y', hasFlat ? 300 : 340);
+  $$('#flatToggle button').forEach(b => b.classList.toggle('on', b.dataset.f === (hasFlat ? '1' : '0')));
+}
+$$('#flatToggle button').forEach(b => b.onclick = () => { if (waving) return; hasFlat = b.dataset.f === '1'; drawShore(); sfx.pop(); });
+drawShore();
+function sendWave() {
+  if (waving) return; waving = true; $('#waveBtn').disabled = true;
+  sfx.whoosh(!hasFlat);
+  const startX = 1080, endX = 370, dur = 2600, t0 = performance.now();
+  wave.setAttribute('opacity', 1);
+  (function step(now) {
+    const p = Math.min(1, (now - t0) / dur), x = startX + (endX - startX) * p;
+    const s = hasFlat ? 1 - .85 * Math.min(1, Math.max(0, (startX - 80 - x) / 620)) ** .8 : 1.15;
+    wave.setAttribute('transform', `translate(${x} ${WATER_Y + 2}) scale(${s})`);
+    if (p < 1) requestAnimationFrame(step); else finishWave();
+  })(t0);
+}
+function finishWave() {
+  const sp = $('#splash');
+  if (hasFlat) {
+    sp.innerHTML = '<ellipse cx="310" cy="250" rx="10" ry="4" fill="none" stroke="#fff" stroke-width="3"><animate attributeName="rx" from="8" to="60" dur="1s" fill="freeze"/><animate attributeName="opacity" from="1" to="0" dur="1s" fill="freeze"/></ellipse>';
+    tone(660, .2, 'sine', 0, .1);
+    say(m2, '찰랑~ 파도가 갯벌을 지나면서 아주 작아졌어요!<b>넓고 얕은 갯벌을 지나면 파도의 힘이 약해져요.</b>', 'good');
+  } else {
+    let s = '';
+    for (let i = 0; i < 16; i++) {
+      const tx = 40 + Math.random() * 240, ty = 130 + Math.random() * 90;
+      s += `<circle cx="300" cy="160" r="${5 + Math.random() * 8}" fill="#5bb7ec"><animate attributeName="cx" from="300" to="${tx}" dur=".9s" fill="freeze"/><animate attributeName="cy" values="160;${50 + Math.random() * 40};${ty}" dur=".9s" fill="freeze"/><animate attributeName="opacity" values="1;1;0" dur="1.4s" fill="freeze"/></circle>`;
+    }
+    sp.innerHTML = s;
+    const bang = $('#bang'); bang.setAttribute('opacity', 1); setTimeout(() => bang.setAttribute('opacity', 0), 1300);
+    $$('.house').forEach(h => { h.classList.remove('shake'); void h.getBBox(); h.classList.add('shake'); });
+    tone(120, .4, 'sawtooth', 0, .08);
+    say(m2, '철썩! 큰 파도가 그대로 방파제를 넘어 마을까지 왔어요.<b>갯벌이 있을 때는 어땠나요?</b>', 'warn');
+  }
+  wave.setAttribute('opacity', 0);
+  tried.add(hasFlat);
+  if (tried.size === 2 && !isDone(2)) setTimeout(() => { sfx.win(); confetti(); done(2); say(m2, '🎉 잘 비교했어요!<b>넓고 얕은 갯벌을 지나면 파도의 힘이 약해져요.</b>', 'good'); }, 1400);
+  setTimeout(() => { waving = false; $('#waveBtn').disabled = false; sp.innerHTML = ''; }, 1500);
+}
+$('#waveBtn').onclick = sendWave;
+
+/* ---------- 4. 갯벌이 하는 일 ---------- */
+const JOBS = [
+  { ic: '🏠', t: '생물의 집', b: '조개·게·낙지가 살고<br>철새가 쉬어 가요', c: '#a08a70' },
+  { ic: '💧', t: '바닷물 정화', b: '조개가 작은 먹이를<br>걸러 먹어 물이 맑아져요', c: '#3a9ee6' },
+  { ic: '🛡️', t: '마을 지키기', b: '큰 파도의 힘을<br>약하게 해요', c: '#ff8a2a' },
+  { ic: '🧺', t: '먹을거리와 배움', b: '조개를 얻고<br>갯벌 체험을 해요', c: '#4fb35f' }
+];
+const jobs = $('#jobs'); let opened = 0;
+JOBS.forEach(j => {
+  const f = document.createElement('button'); f.className = 'flip';
+  f.innerHTML = `<div class="flip-in"><div class="face front"><div class="ic">${j.ic}</div><div class="tt">${j.t}</div><div class="tap">눌러 보세요 👆</div></div><div class="face back" style="background:${j.c}">${j.b}</div></div>`;
+  f.onclick = () => {
+    if (f.classList.contains('open')) return;
+    f.classList.add('open'); opened++; sfx.coin(); setTimeout(() => sparkleAt(f), 300);
+    addCoins(opened);
+    if (opened === 4) setTimeout(() => {
+      $('#jarText').innerHTML = '1년에 17조 원어치가<br>넘어요!'; $('#jarText').style.animation = 'pop .5s';
+      $('#badge').classList.add('on'); sfx.win(); confetti(); done(3);
+    }, 700);
+    else $('#jarText').innerHTML = `동전이 쌓이고 있어요!<br>(${opened} / 4)`;
+  };
+  jobs.insertBefore(f, jobs.querySelector('.jar-box'));
+});
+function addCoins(level) {
+  const g = $('#coins'), base = 214 - (level - 1) * 36;
+  for (let r = 0; r < 4; r++) for (let i = 0; i < 6; i++) {
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+    const x = 42 + i * 23 + (r % 2 ? 11 : 0), y = base - r * 9;
+    Object.entries({ cx: x, cy: y, rx: 12, ry: 5.5, fill: '#ffc83d', stroke: '#d99a12', 'stroke-width': 2, class: 'coin-drop' }).forEach(([k, v]) => c.setAttribute(k, v));
+    c.style.animationDelay = (r * .08 + i * .03) + 's';
+    g.appendChild(c);
+  }
+}
+
+/* ---------- 5. OX 퀴즈 ---------- */
+const QS = [
+  { q: '갯벌에는 생물이 거의 살지 않는다.', a: 'X', e: '갯벌에는 조개, 게, 낙지, 갯지렁이처럼 아주 많은 생물이 살아요.' },
+  { q: '백합은 물속의 작은 먹이를 걸러 먹는다.', a: 'O', e: '백합은 관으로 물을 빨아들여 작은 먹이를 걸러 먹어요.' },
+  { q: '넓은 갯벌은 큰 파도의 힘을 약하게 한다.', a: 'O', e: '넓고 얕은 갯벌을 지나면 파도의 힘이 약해져요.' },
+  { q: '갯벌의 가치는 조개를 팔아 버는 돈뿐이다.', a: 'X', e: '물을 맑게 하고, 마을을 지키고, 생물의 집이 되는 것도 큰 가치예요.' },
+  { q: '서천·고창·신안·보성-순천 갯벌은 세계유산이 되었다.', a: 'O', e: '2021년에 \'한국의 갯벌\'로 유네스코 세계유산이 되었어요.' }
+];
+let qi = 0, score = 0, marks = [];
+const m4 = $('#m4');
+const drawDots = cur => $('#dots').innerHTML = QS.map((_, i) => `<i class="${marks[i] === true ? 'ok' : marks[i] === false ? 'no' : ''} ${i === cur ? 'cur' : ''}"></i>`).join('');
+function showQ() {
+  $('#qNum').textContent = `${qi + 1}번 문제`; $('#qText').textContent = QS[qi].q; $('#qScore').textContent = score;
+  drawDots(qi);
+  $$('.ox button').forEach(b => b.disabled = false); $('#qNext').style.display = 'none';
+  say(m4, '맞으면 O, 틀리면 X를 눌러요!');
+}
+$$('.ox button').forEach(b => b.onclick = () => {
+  const ok = b.dataset.a === QS[qi].a; marks[qi] = ok; if (ok) score++;
+  $$('.ox button').forEach(x => x.disabled = true);
+  if (ok) { sfx.good(); sparkleAt(b); say(m4, `딩동댕! 정답은 ${QS[qi].a}예요.<b>${QS[qi].e}</b>`, 'good'); }
+  else { sfx.bad(); say(m4, `아쉬워요! 정답은 ${QS[qi].a}예요.<b>${QS[qi].e}</b>`, 'warn'); }
+  $('#qScore').textContent = score; drawDots(-1);
+  const nx = $('#qNext'); nx.textContent = qi === QS.length - 1 ? '결과 보기 ▶' : '다음 문제 ▶'; nx.style.display = '';
+});
+$('#qNext').onclick = () => {
+  sfx.pop();
+  if (++qi < QS.length) return showQ();
+  $('#qBody').style.display = 'none'; $('#qResult').style.display = 'block';
+  $('#fScore').textContent = score;
+  $('#fMsg').textContent = score === 5 ? '와, 다 맞혔어요! 이제 갯벌 박사예요!' : score >= 3 ? '잘했어요! 틀린 문제를 한 번 더 살펴봐요.' : '괜찮아요! 다시 풀어 보면 더 잘할 수 있어요.';
+  sfx.win(); confetti(); if (score === 5) setTimeout(confetti, 600);
+  done(4);
+};
+$('#qRetry').onclick = () => { qi = 0; score = 0; marks = []; $('#qBody').style.display = ''; $('#qResult').style.display = 'none'; showQ(); };
+showQ();
+</script>
+</body>
+</html>
